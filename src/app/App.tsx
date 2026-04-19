@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Volume2, VolumeX, MapPin, Send, Heart, Share2, Copy, Calendar, Users } from 'lucide-react';
+import { Navigation } from './components/Navigation';
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -137,7 +138,7 @@ export default function App() {
       </button>
 
       {/* Section 1: Sambutan */}
-      <section className="min-h-screen flex items-center justify-center px-6 py-20 bg-gradient-to-br from-red-900 via-red-800 to-black text-white relative overflow-hidden">
+      <section id="home" className="min-h-screen flex items-center justify-center px-6 py-20 bg-gradient-to-br from-red-900 via-red-800 to-black text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-10 left-10 w-32 h-32 border-2 border-yellow-500 rounded-full"></div>
           <div className="absolute bottom-20 right-20 w-48 h-48 border-2 border-yellow-500 rounded-full"></div>
@@ -169,7 +170,7 @@ export default function App() {
       </section>
 
       {/* Section 2: Info Acara */}
-      <section className="py-20 px-6 bg-white">
+      <section id="event" className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl mb-12 text-red-900" style={{ fontFamily: 'Playfair Display, serif' }}>
             Detail Acara
@@ -246,7 +247,7 @@ export default function App() {
       </section>
 
       {/* Section 4: Lokasi */}
-      <section className="py-20 px-6 bg-white">
+      <section id="location" className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl mb-12 text-red-900" style={{ fontFamily: 'Playfair Display, serif' }}>
             Lokasi Acara
@@ -282,7 +283,7 @@ export default function App() {
       </section>
 
       {/* Section 5: RSVP */}
-      <section className="py-20 px-6 bg-gradient-to-br from-yellow-50 to-red-50">
+      <section id="rsvp" className="py-20 px-6 bg-gradient-to-br from-yellow-50 to-red-50">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-5xl mb-12 text-center text-red-900" style={{ fontFamily: 'Playfair Display, serif' }}>
             Konfirmasi Kehadiran
@@ -337,7 +338,7 @@ export default function App() {
       </section>
 
       {/* Section 6: Ucapan & Doa */}
-      <section className="py-20 px-6 bg-white">
+      <section id="messages" className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-5xl mb-12 text-center text-red-900" style={{ fontFamily: 'Playfair Display, serif' }}>
             Ucapan & Doa
@@ -425,6 +426,9 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Navigation Menu */}
+      <Navigation />
     </div>
   );
 }
