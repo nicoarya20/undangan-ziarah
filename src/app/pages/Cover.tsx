@@ -27,7 +27,7 @@ export default function Cover({ onOpen }: CoverProps) {
         <div className="absolute bottom-0 right-0 w-96 h-96 border-4 border-yellow-500 rounded-full translate-x-48 translate-y-48"></div>
       </div>
 
-      <div className="text-center z-10 px-6 animate-fade-in">
+      <div className="text-center z-10 px-6">
         <div className="mb-8">
           <div className="inline-block p-6 bg-yellow-500/20 rounded-full mb-6">
             <Calendar className="w-16 h-16 text-yellow-400" />

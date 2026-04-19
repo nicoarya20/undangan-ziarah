@@ -1,5 +1,4 @@
 import { Volume2, VolumeX, Home, Info, MapPin, CheckCircle, MessageSquare, Heart } from 'lucide-react';
-import { motion } from 'motion/react';
 
 const navItems = [
   { id: 'home', icon: Home, label: 'Beranda' },
@@ -50,10 +49,7 @@ export default function Layout({ children, isMusicPlaying, setIsMusicPlaying }: 
       </footer>
 
       {/* Navigation Menu */}
-      <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+      <div
         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md"
       >
         <nav className="bg-red-900/90 backdrop-blur-md border border-yellow-500/30 rounded-full shadow-2xl px-6 py-3">
@@ -71,7 +67,7 @@ export default function Layout({ children, isMusicPlaying, setIsMusicPlaying }: 
             ))}
           </ul>
         </nav>
-      </motion.div>
+      </div>
     </div>
   );
 }

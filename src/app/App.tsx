@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Event from './pages/Event';
@@ -16,7 +15,6 @@ export default function App() {
     const opened = sessionStorage.getItem('invitation_opened');
     if (opened) {
       setIsOpen(true);
-      // We don't auto-play music on refresh to respect browser policies
     }
   }, []);
 
@@ -27,47 +25,27 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
+  if (!isOpen) {
+    return <Cover onOpen={handleOpenInvitation} />;
+  }
+
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {!isOpen && (
-          <motion.div
-            key="cover"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -100 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100]"
-          >
-            <Cover onOpen={handleOpenInvitation} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      {/* Main Content with Fade In */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 1, delay: 0.5 }}
-        className={!isOpen ? 'hidden' : ''}
-      >
-        <Layout isMusicPlaying={isMusicPlaying} setIsMusicPlaying={setIsMusicPlaying}>
-          <div id="home">
-            <Home />
-          </div>
-          <div id="event">
-            <Event />
-          </div>
-          <div id="location">
-            <Location />
-          </div>
-          <div id="rsvp">
-            <RSVP />
-          </div>
-          <div id="messages">
-            <Messages />
-          </div>
-        </Layout>
-      </motion.div>
-    </>
+    <Layout isMusicPlaying={isMusicPlaying} setIsMusicPlaying={setIsMusicPlaying}>
+      <div id="home">
+        <Home />
+      </div>
+      <div id="event">
+        <Event />
+      </div>
+      <div id="location">
+        <Location />
+      </div>
+      <div id="rsvp">
+        <RSVP />
+      </div>
+      <div id="messages">
+        <Messages />
+      </div>
+    </Layout>
   );
 }

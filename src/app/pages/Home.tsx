@@ -22,7 +22,7 @@ export default function Home() {
         <div className="absolute bottom-20 right-20 w-48 h-48 border-2 border-yellow-500 rounded-full"></div>
       </div>
 
-      <div className="max-w-3xl text-center z-10 animate-fade-in">
+      <div className="max-w-3xl text-center z-10">
         <div className="mb-8 inline-block p-4 bg-yellow-500/20 rounded-full">
           <Heart className="w-12 h-12 text-yellow-400" />
         </div>
