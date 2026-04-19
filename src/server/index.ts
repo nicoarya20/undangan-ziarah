@@ -24,6 +24,30 @@ const app = new Elysia()
   })
   
   // RSVP Routes
+  .get('/rsvp', async ({ query }) => {
+    const { invitationId } = query;
+    const rsvps = await db.rSVP.findMany({
+      where: {
+        guest: { invitationId }
+      },
+      include: {
+        guest: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const summary = {
+      attending: rsvps.filter(r => r.status === 'ATTENDING').reduce((acc, curr) => acc + curr.guestCount, 0),
+      notAttending: rsvps.filter(r => r.status === 'NOT_ATTENDING').length,
+      totalGuests: rsvps.reduce((acc, curr) => acc + curr.guestCount, 0)
+    };
+
+    return { summary, list: rsvps };
+  }, {
+    query: t.Object({
+      invitationId: t.String()
+    })
+  })
   .post('/rsvp', async ({ body }) => {
     const { invitationId, name, status, guests } = body;
     
