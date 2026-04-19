@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Volume2, VolumeX, Home, Info, MapPin, CheckCircle, MessageSquare, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -12,11 +11,11 @@ const navItems = [
 
 interface LayoutProps {
   children: React.ReactNode;
+  isMusicPlaying: boolean;
+  setIsMusicPlaying: (val: boolean) => void;
 }
 
-export default function Layout({ children }: LayoutProps) {
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-
+export default function Layout({ children, isMusicPlaying, setIsMusicPlaying }: LayoutProps) {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
