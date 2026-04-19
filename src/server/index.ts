@@ -1,0 +1,93 @@
+import { Elysia, t } from 'elysia';
+import { cors } from '@elysiajs/cors';
+import { swagger } from '@elysiajs/swagger';
+import { PrismaClient } from '@prisma/client';
+
+const db = new PrismaClient();
+
+const app = new Elysia()
+  .use(cors())
+  .use(swagger())
+  .get('/', () => ({ status: 'Online Invitation API is running' }))
+  
+  // RSVP Routes
+  .post('/rsvp', async ({ body }) => {
+    const { invitationId, name, status, guests } = body;
+    
+    // 1. Create or find guest
+    // For simplicity, we use slug based on name. 
+    // In a real app, this might be pre-generated.
+    const slug = name.toLowerCase().replace(/\s+/g, '-');
+    
+    let guest = await db.guest.findUnique({
+      where: { slug }
+    });
+    
+    if (!guest) {
+      guest = await db.guest.create({
+        data: {
+          invitationId,
+          name,
+          slug,
+        }
+      });
+    }
+    
+    // 2. Create or update RSVP
+    const rsvp = await db.rSVP.upsert({
+      where: { guestId: guest.id },
+      update: {
+        status: status as any,
+        guestCount: parseInt(guests),
+      },
+      create: {
+        guestId: guest.id,
+        status: status as any,
+        guestCount: parseInt(guests),
+      }
+    });
+    
+    return { success: true, guest, rsvp };
+  }, {
+    body: t.Object({
+      invitationId: t.String(),
+      name: t.String(),
+      status: t.String(),
+      guests: t.String(),
+    })
+  })
+  
+  // Message Routes
+  .get('/messages', async ({ query }) => {
+    return await db.message.findMany({
+      where: { invitationId: query.invitationId },
+      orderBy: { createdAt: 'desc' },
+      include: { guest: true }
+    });
+  }, {
+    query: t.Object({
+      invitationId: t.String()
+    })
+  })
+  .post('/messages', async ({ body }) => {
+    const { invitationId, name, message } = body;
+    
+    return await db.message.create({
+      data: {
+        invitationId,
+        name,
+        content: message,
+      }
+    });
+  }, {
+    body: t.Object({
+      invitationId: t.String(),
+      name: t.String(),
+      message: t.String(),
+    })
+  })
+  
+  .listen(3001);
+
+console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
+export type App = typeof app;
