@@ -132,7 +132,7 @@ export default function App() {
       {/* Music control */}
       <button
         onClick={() => setIsMusicPlaying(!isMusicPlaying)}
-        className="fixed top-6 right-6 z-50 p-4 bg-red-800 text-white rounded-full shadow-lg hover:bg-red-900 transition-all duration-300 hover:scale-110"
+        className="fixed bottom-28 right-6 z-50 p-4 bg-red-800 text-white rounded-full shadow-lg hover:bg-red-900 transition-all duration-300 hover:scale-110"
       >
         {isMusicPlaying ? <Volume2 className="w-6 h-6" /> : <VolumeX className="w-6 h-6" />}
       </button>
