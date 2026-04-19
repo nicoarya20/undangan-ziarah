@@ -11,6 +11,7 @@ This is a React-based web application for creating digital invitations, specific
   - Real-time Countdown Timer to the event date.
   - Event details and integrated Google Maps.
   - RSVP system and public Guest Wall (Messages/Prayers).
+  - Sticky Bottom Navigation Menu for easy section access.
   - Background music control.
   - Social sharing (WhatsApp, Copy Link).
 - **Tech Stack**:
@@ -60,8 +61,6 @@ npm run build
 - **Components**: Follow the existing pattern of using Shadcn UI components for consistency.
 
 ## Git & Deployment Workflow
-
-*Note: This project is not yet initialized as a Git repository.*
 
 ### Workflow for Code Changes
 1.  **Commit** existing changes before starting new work
