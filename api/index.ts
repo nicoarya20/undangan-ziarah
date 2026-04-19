@@ -126,7 +126,7 @@ export const DELETE = handle(app);
 export const PATCH = handle(app);
 export const OPTIONS = handle(app);
 
-if (process.env.NODE_ENV !== 'production') {
+if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
   const { serve } = await import('@hono/node-server');
   const port = 3001;
   console.log(`Server is running on port ${port}`);
