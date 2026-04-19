@@ -34,7 +34,7 @@ model Guest {
   invitationId String
   invitation   Invitation @relation(fields: [invitationId], references: [id])
   name         String
-  slug         String     @unique
+  slug         String     // Removed @unique
   createdAt    DateTime   @default(now())
   rsvp         RSVP?
   messages     Message[]

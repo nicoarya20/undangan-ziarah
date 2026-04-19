@@ -36,10 +36,13 @@ const app = new Elysia()
       orderBy: { createdAt: 'desc' }
     });
 
+    const attendingList = rsvps.filter(r => String(r.status).toUpperCase() === 'ATTENDING');
+    const notAttendingList = rsvps.filter(r => String(r.status).toUpperCase() === 'NOT_ATTENDING');
+
     const summary = {
-      attending: rsvps.filter(r => r.status === 'ATTENDING').reduce((acc, curr) => acc + curr.guestCount, 0),
-      notAttending: rsvps.filter(r => r.status === 'NOT_ATTENDING').length,
-      totalGuests: rsvps.reduce((acc, curr) => acc + curr.guestCount, 0)
+      attending: attendingList.reduce((acc, curr) => acc + curr.guestCount, 0),
+      notAttending: notAttendingList.length,
+      totalGuests: attendingList.reduce((acc, curr) => acc + curr.guestCount, 0)
     };
 
     return { summary, list: rsvps };
@@ -51,33 +54,23 @@ const app = new Elysia()
   .post('/rsvp', async ({ body }) => {
     const { invitationId, name, status, guests } = body;
     
-    // Create or find guest
-    const slug = name.toLowerCase().replace(/\s+/g, '-');
-    let guest = await db.guest.findUnique({
-      where: { slug }
+    // Create a new guest entry every time to allow multiple entries/wall behavior
+    const slug = `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+    
+    const guest = await db.guest.create({
+      data: {
+        invitationId,
+        name,
+        slug,
+      }
     });
     
-    if (!guest) {
-      guest = await db.guest.create({
-        data: {
-          invitationId,
-          name,
-          slug,
-        }
-      });
-    }
-    
-    // Create or update RSVP
-    const rsvp = await db.rSVP.upsert({
-      where: { guestId: guest.id },
-      update: {
-        status: status as any,
-        guestCount: parseInt(guests),
-      },
-      create: {
+    // Create RSVP
+    const rsvp = await db.rSVP.create({
+      data: {
         guestId: guest.id,
         status: status as any,
-        guestCount: parseInt(guests),
+        guestCount: status === 'ATTENDING' ? parseInt(guests) : 0,
       }
     });
     
