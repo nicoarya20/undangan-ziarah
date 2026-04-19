@@ -7,11 +7,38 @@ import RSVP from './pages/RSVP';
 import Messages from './pages/Messages';
 import Cover from './pages/Cover';
 
+export interface InvitationData {
+  id: string;
+  title: string;
+  deceased: string;
+  eventDate: string;
+  locationName: string;
+  locationAddress: string;
+  googleMapsUrl: string;
+  organizer: string;
+}
+
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [invitationData, setInvitationData] = useState<InvitationData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const invitationId = "default-invitation-id";
 
   useEffect(() => {
+    // Fetch invitation data
+    fetch(`http://localhost:3001/invitation?id=${invitationId}`)
+      .then(res => res.json())
+      .then(data => {
+        setInvitationData(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch invitation:", err);
+        setLoading(false);
+      });
+
     const opened = sessionStorage.getItem('invitation_opened');
     if (opened) {
       setIsOpen(true);
@@ -25,27 +52,37 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  if (!isOpen) {
-    return <Cover onOpen={handleOpenInvitation} />;
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-red-900 text-yellow-400">Loading...</div>;
+  }
+
+  if (!invitationData) {
+    return <div className="min-h-screen flex items-center justify-center bg-red-900 text-yellow-400">Invitation not found.</div>;
   }
 
   return (
-    <Layout isMusicPlaying={isMusicPlaying} setIsMusicPlaying={setIsMusicPlaying}>
-      <div id="home">
-        <Home />
+    <>
+      {!isOpen && <Cover onOpen={handleOpenInvitation} data={invitationData} />}
+      
+      <div className={!isOpen ? 'hidden h-screen overflow-hidden' : ''}>
+        <Layout isMusicPlaying={isMusicPlaying} setIsMusicPlaying={setIsMusicPlaying}>
+          <div id="home">
+            <Home data={invitationData} />
+          </div>
+          <div id="event">
+            <Event data={invitationData} />
+          </div>
+          <div id="location">
+            <Location data={invitationData} />
+          </div>
+          <div id="rsvp">
+            <RSVP />
+          </div>
+          <div id="messages">
+            <Messages />
+          </div>
+        </Layout>
       </div>
-      <div id="event">
-        <Event />
-      </div>
-      <div id="location">
-        <Location />
-      </div>
-      <div id="rsvp">
-        <RSVP />
-      </div>
-      <div id="messages">
-        <Messages />
-      </div>
-    </Layout>
+    </>
   );
 }

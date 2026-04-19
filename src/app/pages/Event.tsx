@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Users } from 'lucide-react';
+import { InvitationData } from '../App';
 
-export default function Event() {
+interface EventProps {
+  data: InvitationData;
+}
+
+export default function Event({ data }: EventProps) {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-  const eventData = {
-    nama_acara: 'Co Kong Tik',
-    mendiang: ['TJIOE YOE MOI (Alm)', 'THE LIAN KIM (Alm)'],
-    tanggal: '2026-05-15T09:00:00',
-    keluarga: 'Keluarga Besar Tjioe'
-  };
-
   useEffect(() => {
-    const targetDate = new Date(eventData.tanggal).getTime();
+    const targetDate = new Date(data.eventDate).getTime();
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate - now;
@@ -26,7 +24,9 @@ export default function Event() {
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [eventData.tanggal]);
+  }, [data.eventDate]);
+
+  const deceasedList = data.deceased.split(',').map(s => s.trim());
 
   return (
     <div className="min-h-screen py-20 px-6">
@@ -38,10 +38,10 @@ export default function Event() {
         <div className="bg-gradient-to-br from-red-50 to-yellow-50 rounded-3xl shadow-2xl p-8 md:p-12 border-4 border-yellow-400 mb-12">
           <div className="mb-8">
             <h3 className="text-3xl md:text-4xl mb-4 text-red-800" style={{ fontFamily: 'Playfair Display, serif' }}>
-              {eventData.nama_acara}
+              {data.title}
             </h3>
             <div className="text-gray-700 space-y-2" style={{ fontFamily: 'Noto Serif, serif' }}>
-              {eventData.mendiang.map((nama, idx) => (
+              {deceasedList.map((nama, idx) => (
                 <p key={idx} className="text-xl">{nama}</p>
               ))}
             </div>
@@ -55,7 +55,7 @@ export default function Event() {
               <div className="text-left">
                 <p className="font-semibold text-red-900 mb-1">Tanggal & Waktu</p>
                 <p className="text-gray-700">
-                  {new Date(eventData.tanggal).toLocaleDateString('id-ID', {
+                  {new Date(data.eventDate).toLocaleDateString('id-ID', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -72,7 +72,7 @@ export default function Event() {
               </div>
               <div className="text-left">
                 <p className="font-semibold text-red-900 mb-1">Penyelenggara</p>
-                <p className="text-gray-700">{eventData.keluarga}</p>
+                <p className="text-gray-700">{data.organizer}</p>
               </div>
             </div>
           </div>

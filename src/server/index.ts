@@ -10,15 +10,25 @@ const app = new Elysia()
   .use(swagger())
   .get('/', () => ({ status: 'Online Invitation API is running' }))
   
+  // Invitation Data Route
+  .get('/invitation', async ({ query }) => {
+    const { id } = query;
+    const invitation = await db.invitation.findUnique({
+      where: { id }
+    });
+    return invitation;
+  }, {
+    query: t.Object({
+      id: t.String()
+    })
+  })
+  
   // RSVP Routes
   .post('/rsvp', async ({ body }) => {
     const { invitationId, name, status, guests } = body;
     
-    // 1. Create or find guest
-    // For simplicity, we use slug based on name. 
-    // In a real app, this might be pre-generated.
+    // Create or find guest
     const slug = name.toLowerCase().replace(/\s+/g, '-');
-    
     let guest = await db.guest.findUnique({
       where: { slug }
     });
@@ -33,7 +43,7 @@ const app = new Elysia()
       });
     }
     
-    // 2. Create or update RSVP
+    // Create or update RSVP
     const rsvp = await db.rSVP.upsert({
       where: { guestId: guest.id },
       update: {

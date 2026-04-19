@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
+import { InvitationData } from '../App';
 
-export default function Home() {
+interface HomeProps {
+  data: InvitationData;
+}
+
+export default function Home({ data }: HomeProps) {
   const [guestName, setGuestName] = useState('Tamu Undangan');
-
-  const eventData = {
-    nama_acara: 'Co Kong Tik',
-    keluarga: 'Keluarga Besar Tjioe'
-  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -28,7 +28,7 @@ export default function Home() {
         </div>
 
         <h2 className="text-3xl md:text-4xl mb-8 text-yellow-400" style={{ fontFamily: 'Playfair Display, serif' }}>
-          Undangan {eventData.nama_acara}
+          Undangan {data.title}
         </h2>
 
         <p className="text-lg md:text-xl leading-relaxed mb-8 text-yellow-100" style={{ fontFamily: 'Noto Serif, serif' }}>
@@ -42,7 +42,7 @@ export default function Home() {
         </div>
 
         <p className="text-base md:text-lg text-yellow-200/90">
-          Untuk menghadiri upacara {eventData.nama_acara} yang akan diselenggarakan oleh {eventData.keluarga}
+          Untuk menghadiri upacara {data.title} yang akan diselenggarakan oleh {data.organizer}
         </p>
       </div>
     </section>

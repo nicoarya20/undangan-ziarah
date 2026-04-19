@@ -1,12 +1,13 @@
 {
   "name": "@figma/my-make-file",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "build": "vite build",
     "dev": "bun run server & vite",
-    "server": "bun run src/server/index.ts"
+    "server": "bun run src/server/index.ts",
+    "seed": "bun run prisma/seed.ts"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",

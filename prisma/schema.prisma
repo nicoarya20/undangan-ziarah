@@ -7,16 +7,20 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Invitation {
   id              String    @id @default(uuid())
   slug            String    @unique
   title           String
+  deceased        String    // Names of deceased, e.g., "Name 1, Name 2"
   eventDate       DateTime
   locationName    String
   locationAddress String
   googleMapsUrl   String?
+  organizer       String?   // Keluarga besar/penyelenggara
   musicUrl        String?
   theme           String?
   createdAt       DateTime  @default(now())

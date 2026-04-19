@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Calendar } from 'lucide-react';
+import { InvitationData } from '../App';
 
 interface CoverProps {
   onOpen: () => void;
+  data: InvitationData;
 }
 
-export default function Cover({ onOpen }: CoverProps) {
+export default function Cover({ onOpen, data }: CoverProps) {
   const [guestName, setGuestName] = useState('Tamu Undangan');
-
-  const eventData = {
-    nama_acara: 'Co Kong Tik',
-    mendiang: ['TJIOE YOE MOI (Alm)', 'THE LIAN KIM (Alm)'],
-  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -19,9 +16,10 @@ export default function Cover({ onOpen }: CoverProps) {
     if (tamu) setGuestName(tamu);
   }, []);
 
+  const deceasedList = data.deceased.split(',').map(s => s.trim());
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-900 via-red-800 to-black relative overflow-hidden w-full h-full fixed inset-0 z-[100]">
-      {/* Decorative background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-64 h-64 border-4 border-yellow-500 rounded-full -translate-x-32 -translate-y-32"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 border-4 border-yellow-500 rounded-full translate-x-48 translate-y-48"></div>
@@ -33,10 +31,10 @@ export default function Cover({ onOpen }: CoverProps) {
             <Calendar className="w-16 h-16 text-yellow-400" />
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-yellow-400 mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
-            {eventData.nama_acara}
+            {data.title}
           </h1>
           <div className="space-y-2 text-white text-lg md:text-xl mb-8" style={{ fontFamily: 'Noto Serif, serif' }}>
-            {eventData.mendiang.map((nama, idx) => (
+            {deceasedList.map((nama, idx) => (
               <p key={idx} className="font-semibold">{nama}</p>
             ))}
           </div>
