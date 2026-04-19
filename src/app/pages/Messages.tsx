@@ -15,10 +15,11 @@ export default function Messages() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const invitationId = "default-invitation-id";
+  const API_URL = import.meta.env.VITE_API_URL || "/api";
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/messages?invitationId=${invitationId}`);
+      const response = await fetch(`${API_URL}/messages?invitationId=${invitationId}`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
@@ -42,7 +43,7 @@ export default function Messages() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('http://localhost:3001/messages', {
+      const response = await fetch(`${API_URL}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

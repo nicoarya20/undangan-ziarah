@@ -25,10 +25,11 @@ export default function RSVP() {
   const [isLoading, setIsLoading] = useState(true);
 
   const invitationId = "default-invitation-id";
+  const API_URL = import.meta.env.VITE_API_URL || "/api";
 
   const fetchRSVPData = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/rsvp?invitationId=${invitationId}`);
+      const response = await fetch(`${API_URL}/rsvp?invitationId=${invitationId}`);
       if (response.ok) {
         const data = await response.json();
         setRsvpData(data);
@@ -55,7 +56,7 @@ export default function RSVP() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await fetch('http://localhost:3001/rsvp', {
+      const response = await fetch(`${API_URL}/rsvp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

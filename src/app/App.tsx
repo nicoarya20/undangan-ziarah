@@ -25,10 +25,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   const invitationId = "default-invitation-id";
+  const API_URL = import.meta.env.VITE_API_URL || "/api";
 
   useEffect(() => {
     // Fetch invitation data
-    fetch(`http://localhost:3001/invitation?id=${invitationId}`)
+    fetch(`${API_URL}/invitation?id=${invitationId}`)
       .then(res => res.json())
       .then(data => {
         setInvitationData(data);
