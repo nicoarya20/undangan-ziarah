@@ -8,7 +8,11 @@ const db = new PrismaClient();
 const app = new Elysia()
   .use(cors())
   .use(swagger())
+  .onBeforeHandle(({ request }) => {
+    console.log(`[${new Date().toISOString()}] ${request.method} ${request.url}`);
+  })
   .get('/', () => ({ status: 'Online Invitation API is running' }))
+  .get('/test', () => ({ message: 'Test route is working' }))
   
   // Invitation Data Route
   .get('/invitation', async ({ query }) => {
@@ -26,26 +30,33 @@ const app = new Elysia()
   // RSVP Routes
   .get('/rsvp', async ({ query }) => {
     const { invitationId } = query;
-    const rsvps = await db.rSVP.findMany({
-      where: {
-        guest: { invitationId }
-      },
-      include: {
-        guest: true
-      },
-      orderBy: { createdAt: 'desc' }
-    });
+    console.log(`[RSVP] Fetching for invitationId: ${invitationId}`);
+    try {
+      const rsvps = await db.rSVP.findMany({
+        where: {
+          guest: { invitationId }
+        },
+        include: {
+          guest: true
+        },
+        orderBy: { createdAt: 'desc' }
+      });
 
-    const attendingList = rsvps.filter(r => String(r.status).toUpperCase() === 'ATTENDING');
-    const notAttendingList = rsvps.filter(r => String(r.status).toUpperCase() === 'NOT_ATTENDING');
+      const attendingList = rsvps.filter(r => String(r.status).toUpperCase() === 'ATTENDING');
+      const notAttendingList = rsvps.filter(r => String(r.status).toUpperCase() === 'NOT_ATTENDING');
 
-    const summary = {
-      attending: attendingList.reduce((acc, curr) => acc + curr.guestCount, 0),
-      notAttending: notAttendingList.length,
-      totalGuests: attendingList.reduce((acc, curr) => acc + curr.guestCount, 0)
-    };
+      const summary = {
+        attending: attendingList.reduce((acc, curr) => acc + curr.guestCount, 0),
+        notAttending: notAttendingList.length,
+        totalGuests: attendingList.reduce((acc, curr) => acc + curr.guestCount, 0)
+      };
 
-    return { summary, list: rsvps };
+      console.log(`[RSVP] Found ${rsvps.length} entries. Summary:`, summary);
+      return { summary, list: rsvps };
+    } catch (error) {
+      console.error('[RSVP] Error fetching data:', error);
+      throw error;
+    }
   }, {
     query: t.Object({
       invitationId: t.String()
@@ -114,7 +125,15 @@ const app = new Elysia()
     })
   })
   
-  .listen(3001);
+  .all('*', ({ path, request }) => {
+    console.log(`[404] Unhandled request: ${request.method} ${path}`);
+    return { error: 'Not Found', path, method: request.method };
+  })
+  
+  .listen({
+    port: 3001,
+    hostname: '0.0.0.0'
+  });
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
 export type App = typeof app;

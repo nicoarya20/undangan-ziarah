@@ -32,6 +32,8 @@ export default function RSVP() {
       if (response.ok) {
         const data = await response.json();
         setRsvpData(data);
+      } else {
+        console.error(`Failed to fetch RSVP data: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error('Error fetching RSVP data:', error);

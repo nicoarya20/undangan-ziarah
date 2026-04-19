@@ -22,6 +22,8 @@ export default function Messages() {
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
+      } else {
+        console.error(`Failed to fetch messages: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
