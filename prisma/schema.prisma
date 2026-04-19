@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Invitation {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  title           String
+  eventDate       DateTime
+  locationName    String
+  locationAddress String
+  googleMapsUrl   String?
+  musicUrl        String?
+  theme           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  guests          Guest[]
+  messages        Message[]
+}
+
+model Guest {
+  id           String     @id @default(uuid())
+  invitationId String
+  invitation   Invitation @relation(fields: [invitationId], references: [id])
+  name         String
+  slug         String     @unique
+  createdAt    DateTime   @default(now())
+  rsvp         RSVP?
+  messages     Message[]
+}
+
+model RSVP {
+  id         String     @id @default(uuid())
+  guestId    String     @unique
+  guest      Guest      @relation(fields: [guestId], references: [id])
+  status     RSVPStatus @default(UNCERTAIN)
+  guestCount Int        @default(1)
+  createdAt  DateTime   @default(now())
+}
+
+enum RSVPStatus {
+  ATTENDING
+  NOT_ATTENDING
+  UNCERTAIN
+}
+
+model Message {
+  id           String      @id @default(uuid())
+  invitationId String
+  invitation   Invitation  @relation(fields: [invitationId], references: [id])
+  guestId      String?
+  guest        Guest?      @relation(fields: [guestId], references: [id])
+  name         String?     // Fallback if guestId is null
+  content      String
+  createdAt    DateTime    @default(now())
+}
