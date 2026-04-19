@@ -1,11 +1,11 @@
 {
   "name": "@figma/my-make-file",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
+    "dev": "bun run server & vite",
     "server": "bun run src/server/index.ts"
   },
   "dependencies": {
