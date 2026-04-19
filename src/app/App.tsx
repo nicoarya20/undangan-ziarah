@@ -1,4 +1,3 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Event from './pages/Event';
@@ -8,16 +7,22 @@ import Messages from './pages/Messages';
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/event" element={<Event />} />
-          <Route path="/location" element={<Location />} />
-          <Route path="/rsvp" element={<RSVP />} />
-          <Route path="/messages" element={<Messages />} />
-        </Route>
-      </Routes>
-    </Router>
+    <Layout>
+      <div id="home">
+        <Home />
+      </div>
+      <div id="event">
+        <Event />
+      </div>
+      <div id="location">
+        <Location />
+      </div>
+      <div id="rsvp">
+        <RSVP />
+      </div>
+      <div id="messages">
+        <Messages />
+      </div>
+    </Layout>
   );
 }

@@ -1,19 +1,28 @@
 import { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Volume2, VolumeX, Home, Info, MapPin, CheckCircle, MessageSquare, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 
 const navItems = [
-  { path: '/', icon: Home, label: 'Beranda' },
-  { path: '/event', icon: Info, label: 'Acara' },
-  { path: '/location', icon: MapPin, label: 'Lokasi' },
-  { path: '/rsvp', icon: CheckCircle, label: 'RSVP' },
-  { path: '/messages', icon: MessageSquare, label: 'Ucapan' },
+  { id: 'home', icon: Home, label: 'Beranda' },
+  { id: 'event', icon: Info, label: 'Acara' },
+  { id: 'location', icon: MapPin, label: 'Lokasi' },
+  { id: 'rsvp', icon: CheckCircle, label: 'RSVP' },
+  { id: 'messages', icon: MessageSquare, label: 'Ucapan' },
 ];
 
-export default function Layout() {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const location = useLocation();
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-yellow-50 pb-24" style={{ fontFamily: 'Poppins, sans-serif' }}>
@@ -27,7 +36,7 @@ export default function Layout() {
 
       {/* Main Content */}
       <main>
-        <Outlet />
+        {children}
       </main>
 
       {/* Footer */}
@@ -51,16 +60,14 @@ export default function Layout() {
         <nav className="bg-red-900/90 backdrop-blur-md border border-yellow-500/30 rounded-full shadow-2xl px-6 py-3">
           <ul className="flex items-center justify-between">
             {navItems.map((item) => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={`flex flex-col items-center gap-1 transition-colors ${
-                    location.pathname === item.path ? 'text-yellow-400' : 'text-yellow-500/70 hover:text-yellow-400'
-                  }`}
+              <li key={item.id}>
+                <button
+                  onClick={() => scrollToSection(item.id)}
+                  className="flex flex-col items-center gap-1 text-yellow-500/70 hover:text-yellow-400 transition-colors"
                 >
                   <item.icon className="w-5 h-5" />
                   <span className="text-[10px] font-medium uppercase tracking-wider">{item.label}</span>
-                </Link>
+                </button>
               </li>
             ))}
           </ul>
