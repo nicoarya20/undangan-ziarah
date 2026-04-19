@@ -4,5 +4,6 @@ dist
 *.local
 .vscode
 .idea
+.env
 
 /src/generated/prisma
