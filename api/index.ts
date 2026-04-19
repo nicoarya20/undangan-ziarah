@@ -1,10 +1,16 @@
 import { Hono } from 'hono';
-import { handle } from '@hono/node-server/vercel';
+import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { PrismaClient } from '@prisma/client';
 
-const db = new PrismaClient();
+// ✅ Prisma Singleton — wajib untuk serverless
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const db = globalForPrisma.prisma ?? new PrismaClient();
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
+
+// ✅ Wajib untuk Vercel Serverless Functions
+export const config = { runtime: 'nodejs' };
 
 const app = new Hono().basePath('/api');
 
@@ -60,9 +66,9 @@ app.get('/rsvp', async (c) => {
 app.post('/rsvp', async (c) => {
   const body = await c.req.json();
   const { invitationId, name, status, guests } = body;
-  
+
   const slug = `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
-  
+
   try {
     const guest = await db.guest.create({
       data: {
@@ -71,7 +77,7 @@ app.post('/rsvp', async (c) => {
         slug,
       }
     });
-    
+
     const rsvp = await db.rSVP.create({
       data: {
         guestId: guest.id,
@@ -79,7 +85,7 @@ app.post('/rsvp', async (c) => {
         guestCount: status === 'ATTENDING' ? parseInt(guests) : 0,
       }
     });
-    
+
     return c.json({ success: true, guest, rsvp });
   } catch (error) {
     console.error('[RSVP] Error creating entry:', error);
@@ -103,7 +109,7 @@ app.get('/messages', async (c) => {
 app.post('/messages', async (c) => {
   const body = await c.req.json();
   const { invitationId, name, message } = body;
-  
+
   const entry = await db.message.create({
     data: {
       invitationId,
@@ -119,6 +125,7 @@ app.notFound((c) => {
   return c.json({ error: 'Not Found', path: c.req.path }, 404);
 });
 
+// ✅ Export handler untuk Vercel
 export const GET = handle(app);
 export const POST = handle(app);
 export const PUT = handle(app);
@@ -126,14 +133,12 @@ export const DELETE = handle(app);
 export const PATCH = handle(app);
 export const OPTIONS = handle(app);
 
-if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+// ✅ Local dev fallback
+if (process.env.NODE_ENV !== 'production') {
   const { serve } = await import('@hono/node-server');
   const port = 3001;
   console.log(`Server is running on port ${port}`);
-  serve({
-    fetch: app.fetch,
-    port
-  });
+  serve({ fetch: app.fetch, port });
 }
 
 export default handle(app);
